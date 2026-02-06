@@ -1,9 +1,10 @@
 #!/usr/bin/env python3.8
 
-import cv2
 import rospy
 from sensor_msgs.msg import CameraInfo, Image
 
+import numpy as np
+import cv2
 from ultralytics import YOLO
 
 CAMERA_INFO_TOPIC = "/camera/color/camera_info"
@@ -25,9 +26,13 @@ def fetch_camera_info() -> CameraInfo:
         rospy.logwarn("ROS Shutdown occured before camera node could fetch camera metadata!")
 
 def camera_image_callback(data: Image) -> None:
+    global last_image
     last_image = data
 
 def main():
+    #Ref our last image
+    global last_image
+
     #Declare our node
     rospy.init_node("camera_inference_node", anonymous=False)
 
@@ -52,8 +57,18 @@ def main():
 
         if (last_image != None):
             rospy.loginfo("Performing inference...")
-            results = model(last_image)
-            rospy.loginfo(f"HEY LOOK HERE ->>>>> WE FOUND SOMETHING!!! <---- HEY LOOK HERE")
+
+            #Swap to a form that YOLO likes
+            numpy_image = np.frombuffer(last_image.data, dtype=np.uint8).reshape(
+                last_image.height, last_image.width - 1
+            )
+
+            #Swap to RGB from camera's BGR
+            rgb_image = cv2.cvtColor(numpy_image, cv2.COLOR_BGR2RGB)
+
+            results = model(rgb_image)
+            last_image = None
+
             for result in results:
                 class_names = result.names
                 for box in result.boxes:
