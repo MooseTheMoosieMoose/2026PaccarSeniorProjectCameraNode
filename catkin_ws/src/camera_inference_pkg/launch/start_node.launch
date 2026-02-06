@@ -1,0 +1,16 @@
+<launch>
+    <exec_depend>
+        realsense2_camera
+    </exec_depend>
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch" required="true">
+        <arg name="color" value="true"/>
+        <arg name="depth" value="true"/>
+    </include>
+
+    <node 
+        pkg="camera_inference_pkg" 
+        type="camera_inference_node.py" 
+        name="camera_inference_node"
+        output="screen"
+    />
+</launch>
