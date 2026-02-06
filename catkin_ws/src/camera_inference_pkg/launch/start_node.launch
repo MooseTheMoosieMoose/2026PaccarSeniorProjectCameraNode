@@ -1,10 +1,7 @@
 <launch>
-    <exec_depend>
-        realsense2_camera
-    </exec_depend>
-    <include file="$(find realsense2_camera)/launch/rs_camera.launch" required="true">
-        <arg name="color" value="true"/>
-        <arg name="depth" value="true"/>
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="enable_color" value="true"/>
+        <arg name="enable_depth" value="true"/>
     </include>
 
     <node 

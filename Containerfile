@@ -27,19 +27,31 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 #--------------------------
-#Get the YOLO apis, and some extra ROS tools, along with python libs
+#Get some extra ROS tools, along with python libs
 #--------------------------
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install \
-        ultralytics \
         numpy \
         pandas \
+        matplotlib \
+        pillow \
+        tqdm \
+        scipy \
+        tensorboard \
+        seaborn \
         rosdep \
         catkin-tools \
         rosinstall \
         rosinstall-generator \
         wstool \
         xacro
+
+#--------------------------
+#YOLO by default will try and pull its own version of OpenCV which is very naughty
+# so we have to bully it and install our own dependencies ourself
+#--------------------------
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install ultralytics --no-deps
 
 #--------------------------
 #Get ROS and init ROS deps
