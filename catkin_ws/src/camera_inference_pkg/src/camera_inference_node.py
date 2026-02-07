@@ -8,7 +8,7 @@ import cv2
 from ultralytics import YOLO
 
 CAMERA_INFO_TOPIC = "/camera/color/camera_info"
-CAMERA_IMAGE_TOPIC = "/camera/camera/color/image_raw"
+CAMERA_IMAGE_TOPIC = "/camera/color/image_raw"
 
 last_image = None
 
@@ -60,13 +60,10 @@ def main():
 
             #Swap to a form that YOLO likes
             numpy_image = np.frombuffer(last_image.data, dtype=np.uint8).reshape(
-                last_image.height, last_image.width - 1
+                last_image.height, last_image.width, 3
             )
 
-            #Swap to RGB from camera's BGR
-            rgb_image = cv2.cvtColor(numpy_image, cv2.COLOR_BGR2RGB)
-
-            results = model(rgb_image)
+            results = model(numpy_image)
             last_image = None
 
             for result in results:
