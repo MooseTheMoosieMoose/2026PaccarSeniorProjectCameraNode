@@ -4,7 +4,6 @@ import rospy
 from sensor_msgs.msg import CameraInfo, Image
 
 import numpy as np
-import cv2
 from ultralytics import YOLO
 
 CAMERA_INFO_TOPIC = "/camera/color/camera_info"
